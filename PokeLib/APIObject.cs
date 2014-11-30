@@ -19,8 +19,6 @@ namespace PokeLib
         internal string resourcePath;
         public string ResourcePath { get { return resourcePath; } }
 
-        public abstract Task Create();
-
         public JObject GetJsonFromCache()
         {
             JObject result;
