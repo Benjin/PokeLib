@@ -22,25 +22,27 @@ namespace PokeLib
         private static Effectiveness[,] effectivenessMatrix = new Effectiveness[NUM_TYPES + 1, NUM_TYPES + 1]; // [attacking type, defending type]; +1 accounts for the 1-based indexing of the API
         public static Effectiveness[,] EffectivenessMatrix { get { return effectivenessMatrix; } }
 
-        private static Dictionary<string, string> typeColors = new Dictionary<string, string>() { { "normal", "#A0A070" },
-                                                                                                  { "fire", "#E77422" },
-                                                                                                  { "water", "#4F7DED" },
-                                                                                                  { "electric", "#F4C81A" },
-                                                                                                  { "grass", "#6BBA44" },
-                                                                                                  { "ice", "#8CD3D3" },
-                                                                                                  { "fighting", "#B22C25" },
-                                                                                                  { "poison", "#933B93" },
-                                                                                                  { "ground", "#DBB54E" },
-                                                                                                  { "flying", "#A68FED" },
-                                                                                                  { "psychic", "#F7356F" },
-                                                                                                  { "bug", "#A3B21F" },
-                                                                                                  { "rock", "#A69133" },
-                                                                                                  { "ghost", "#A69133" },
-                                                                                                  { "dragon", "#5C1EF3" },
-                                                                                                  { "dark", "#614C3E" },
-                                                                                                  { "steel", "#A9A9C6" },
-                                                                                                  { "fairy", "#E384E3" },
-                                                                                                 }; // TODO: replace these with a real Color class
+        private static Dictionary<string, string> typeColors = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+            { "normal", "#A0A070" },
+            { "fire", "#E77422" },
+            { "water", "#4F7DED" },
+            { "electric", "#F4C81A" },
+            { "grass", "#6BBA44" },
+            { "ice", "#8CD3D3" },
+            { "fighting", "#B22C25" },
+            { "poison", "#933B93" },
+            { "ground", "#DBB54E" },
+            { "flying", "#A68FED" },
+            { "psychic", "#F7356F" },
+            { "bug", "#A3B21F" },
+            { "rock", "#A69133" },
+            { "ghost", "#624D85" },
+            { "dragon", "#5C1EF3" },
+            { "dark", "#614C3E" },
+            { "steel", "#A9A9C6" },
+            { "fairy", "#E384E3" },
+            }; // TODO: replace these with a real Color class
+
 
         private static bool initialized = false;
 
@@ -49,11 +51,11 @@ namespace PokeLib
             if (initialized) return;
 
             await Task.WhenAll(Enumerable.Range(1, NUM_TYPES).Select(i =>
-            
+
                 Get(i)
             ));
-            
-            foreach(PokeType type in cachedTypes.Values)
+
+            foreach (PokeType type in cachedTypes.Values)
             {
                 JObject data = type.GetJsonFromCache();
                 addLabels(type, (JArray)data["super_effective"], Effectiveness.SuperEffectiveAgainst);
@@ -111,6 +113,14 @@ namespace PokeLib
         private PokeType(int id)
         {
             this.id = id;
+        }
+
+        public string Color
+        {
+            get
+            {
+                return typeColors[Name];
+            }
         }
 
         public override string ToString()

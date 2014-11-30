@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Diagnostics;
+using System.Windows;
 
 namespace PokeLib
 {
@@ -14,6 +15,24 @@ namespace PokeLib
         private static HttpClient fetcher = new HttpClient();
         private static string baseUri = "http://pokeapi.co";
         private static string prefix = "/api/v1/";
+
+        public static async Task<byte[]> GetPokemonImage(int n)
+        {
+            string resourcePath = "/media/img/" + n + ".png";
+
+            try
+            {
+                // TODO: there may be an error message in the form of JSON returned; that'll break things
+
+                byte[] imageByteArray = await fetcher.GetByteArrayAsync(baseUri + resourcePath);
+                return imageByteArray;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.ToString());
+                return null;
+            }
+        }
 
         public static async Task<JObject> GetPokemon(int n)
         {
@@ -30,12 +49,12 @@ namespace PokeLib
         public static async Task<JObject> GetData(string resourcePath, bool forceRefresh = false)
         {
             if (!resourceCache.ContainsKey(resourcePath) || forceRefresh)
-                resourceCache[resourcePath] = await FetchDataFromServer(resourcePath);
+                resourceCache[resourcePath] = await FetchJsonFromServer(resourcePath);
 
             return resourceCache[resourcePath];
         }
 
-        public static async Task<JObject> FetchDataFromServer(string resourcePath)
+        public static async Task<JObject> FetchJsonFromServer(string resourcePath)
         {
             try
             {

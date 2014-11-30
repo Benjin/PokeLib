@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace PokeLib
 {
     public abstract class APIObject
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         internal int id;
         public int Id { get { return id; } }
 
@@ -28,6 +31,15 @@ namespace PokeLib
             {
                 Debug.WriteLine("Error: Json not found in cache for instantiated object");
                 return null;
+            }
+        }
+
+        protected void OnPropertyChanged(string info)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(info));
             }
         }
 
